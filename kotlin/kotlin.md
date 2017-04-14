@@ -8,8 +8,18 @@ Drew Stephens
 @dinomite
 \<drew@dinomite.net\>
 
+^Software engineer; Forum for All, chat to websites
+
 ---
-^Last point is important because it's well supported (unlike Scala)
+
+# What do I know?
+
+- Perl and Regexes
+- PHP (5.3/5.4)
+- Ruby & Rails
+- JVM (Java, Groovy, Kotlin)
+
+---
 
 # What is it?
 
@@ -20,8 +30,9 @@ Drew Stephens
 
 [^1]: If you use the correct IDE
 
+^Last point is important because it's well supported (unlike Scala)
+
 ---
-^Kotlin is cleaner and more concise than Java
 
 # Hello, World!
 
@@ -36,8 +47,18 @@ fun main(args : Array<String>) {
 <a name="kotlin-hello-world"/>
 #### also in [Java](#java-hello-world)
 
+^Kotlin is cleaner and more concise than Java
+
 ---
-^Data classes (like Scala case class; more later) are a great example of this simplicity
+
+# Variables
+
+- `val`s are read-only (like `final` in Java)
+- `var`s are mutable
+
+^Using final in Java provides guarantees for threading; immutable by default
+
+---
 
 # Data class
 
@@ -50,10 +71,9 @@ data class User(val id: Int,
 <a name="kotlin-data-class"/>
 #### also in [Java](#pojo)
 
----
-^One of the most important differences is null safety
+^Data classes (like Scala case class; more later) are a great example of this simplicity
 
-^Cleaner than option types
+---
 
 # Null safety
 
@@ -62,8 +82,11 @@ var neverNull: String = "foobar"
 var maybeNull: String? = "baz"
 ```
 
+^One of the most important differences is null safety
+
+^Cleaner than option types
+
 ---
-^We love typed languages because they give us errors early—Kotlin won't let you get into a situation where you could have an NPE
 
 # Null safety
 
@@ -73,6 +96,8 @@ var maybeNull: String? = "baz"
 
 neverNull = null   // Compiler error
 ```
+
+^We love typed languages because they give us errors early—Kotlin won't let you get into a situation where you could have an NPE
 
 ---
 
@@ -101,7 +126,6 @@ maybeNull.length   // Compiler error
 ```
 
 ---
-^If you're really ok with returning null, Kotlin will let you, but you have to be explicit
 
 # Null safety
 
@@ -116,8 +140,9 @@ maybeNull.length   // Compiler error
 maybeNull?.length  // Possible null instead of length
 ```
 
+^If you're really ok with returning null, Kotlin will let you, but you have to be explicit
+
 ---
-^You can also just be stupid
 
 # Null safety
 
@@ -133,8 +158,9 @@ maybeNull?.length  // Possible null instead of length
 maybeNull!!.length // Possible NPE
 ```
 
+^You can also just be stupid
+
 ---
-^Finally, the Elvis operator makes returning a default instead of null easy
 
 # Null safety
 
@@ -152,8 +178,9 @@ maybeNull!!.length // Possible NPE
 var valueOrNegativeOne = maybeNull ?: -1
 ```
 
+^Finally, the Elvis operator makes returning a default instead of null easy
+
 ---
-^Null values are easy to handle because the compiler will track their nullibility
 
 # Null tracking
 
@@ -166,8 +193,9 @@ if (maybeNull != null && maybeNull.length > 5) {
 }
 ```
 
+^Null values are easy to handle because the compiler will track their nullibility
+
 ---
-^The compiler can infer types
 
 # Type inference
 
@@ -182,6 +210,12 @@ val listOfStrings = returnsAListOfStrings()
 val firstString = listOfStrings[0]
 ```
 
+^The compiler can infer types
+
+---
+
+# forEach{} and map{} examples
+
 ---
 
 # [fit] Checked exceptions?
@@ -190,23 +224,12 @@ val firstString = listOfStrings[0]
 
 ---
 
-# Changes from Java
+# Class visibility
 
-**Visibility**
-Default public
-
-**Classes**
-Default final
+- Default public
+- Default final
 
 ---
-
-# Variables
-
-- `val`s are read-only (like `final` in Java)
-- `var`s are mutable
-
----
-^Free copy constructor is great—change a few attributes but get a new object
 
 # Data class (POJO equivalent)
 
@@ -221,8 +244,13 @@ Free stuff:
 - `toString()`
 - `copy()`
 
+^Free copy constructor is great—change a few attributes but get a new object
+
 ---
-^Make string enum without looking it up on Stack Overflow
+
+# DB example of copy constructor use
+
+---
 
 # Better enums
 
@@ -234,6 +262,8 @@ enum class Matcher(val cssQuery: String,
     TITLE("title", null)
 }
 ```
+
+^Make string enum without looking it up on Stack Overflow
 
 ---
 
@@ -262,10 +292,13 @@ println("The variable is $foo")
 ```
 
 ---
-^Single-class-per-file is a good model most of the time, but lifting that restriction can really help organization
+
+# Webapp example of tiny classes in file
+
+---
 
 ```kotlin
-// Widgets.kt
+// Presidents.kt
 package net.dinomite.pretend
 
 abstract class President(val handSize: HandSize) {
@@ -283,12 +316,13 @@ class Trump : President(HandSize.SMALL) {
 }
 ```
 
+^Single-class-per-file is a good model most of the time, but lifting that restriction can really help organization
+
 ---
 
 # [fit] How do I use it?
 
 ---
-^If you're still using Maven, rethink your life choices
 
 # build.gradle
 
@@ -310,6 +344,8 @@ dependencies {
     compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
 }
 ```
+
+^If you're still using Maven, rethink your life choices
 
 ---
 
