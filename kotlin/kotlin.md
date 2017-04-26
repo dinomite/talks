@@ -28,9 +28,27 @@ Drew Stephens
 - Syntax like Java, but cleaner
 - Written by JetBrains, who wrote your IDE[^1]
 
-[^1]: If you use the correct IDE
+[^1]: If you use the [correct IDE](https://www.jetbrains.com/idea/)
 
-^Last point is important because it's well supported (unlike Scala)
+^Last point is important because it's well supported
+
+---
+
+# Hello, world! (Java)
+
+```java
+package demo;
+
+public static void main(Array<String> args) {
+    try {
+        System.out.println("Hello, world!");
+    } catch (HatefulException e) {
+        e.printStackTrace();
+    }
+}
+```
+
+^A simple Hello World in Java, with slight embellishment
 
 ---
 
@@ -44,10 +62,17 @@ fun main(args : Array<String>) {
 }
 ```
 
-<a name="kotlin-hello-world"/>
-#### also in [Java](#java-hello-world)
-
 ^Kotlin is cleaner and more concise than Java
+No semicolons, default visibility is public, no void return type, static replaced by top-level functions
+
+---
+
+# [fit] No
+# [fit] more
+# [fit] checked
+# [fit] exceptions
+
+^Kotlin doesn't have checked exceptions
 
 ---
 
@@ -55,23 +80,13 @@ fun main(args : Array<String>) {
 
 - `val`s are read-only (like `final` in Java)
 - `var`s are mutable
-
-^Using final in Java provides guarantees for threading; immutable by default
-
----
-
-# Data class
+- Type inference
 
 ```kotlin
-data class User(val id: Int,
-                val name: String,
-                val admin: Boolean)
+val foo = "Foo" // is a String
 ```
 
-<a name="kotlin-data-class"/>
-#### also in [Java](#pojo)
-
-^Data classes (like Scala case class; more later) are a great example of this simplicity
+^Using final in Java provides guarantees for threading; immutable by default
 
 ---
 
@@ -214,13 +229,22 @@ val firstString = listOfStrings[0]
 
 ---
 
-# forEach{} and map{} examples
+# Better streams syntax
 
----
+```kotlin
+val cars = mapOf(
+            2 to "Vandoorne", 3 to "Ricciardo",
+            5 to "Vettel", 7 to "Räikkönen",
+            …
+        )
+val qualified = listOf(44, 5, 77, 7, 33, …)
+val grid = qualified.map { cars[it] }
+// Java:   qualified.stream().map(e -> cars.get(e))
 
-# [fit] Checked exceptions?
-<br>
-# [fit] Ain't nobody got time for that
+// [Hamilton, Vettel, Bottas, Räikkönen, …]
+```
+
+^Note Kotlin's default `it`, map index access
 
 ---
 
@@ -228,6 +252,33 @@ val firstString = listOfStrings[0]
 
 - Default public
 - Default final
+
+
+---
+
+# POJO
+
+```java
+public class Pagechat {
+    private final int id;
+    private final String url;
+    private final boolean fresh;
+
+    public Pagechat(int id, String url, boolean fresh) {
+        this.id = id;
+        this.url = url;
+        this.fresh = fresh;
+    }
+
+    public int getId() { return id; }
+    public String getUrl() { return url; }
+    public boolean getFresh() { return fresh; }
+
+    public boolean equals(Object obj) { … }
+    public int hashCode() { … }
+    public String toString() { … }
+}
+```
 
 ---
 
@@ -240,15 +291,34 @@ data class Pagechat(val id: Int,
 ```
 
 Free stuff:
+- Accessors for fields; setters for `var`s
 - `equals()`/`hashCode()`
 - `toString()`
 - `copy()`
 
-^Free copy constructor is great—change a few attributes but get a new object
+^Like Scala case classes
+Free copy constructor is great—change a few attributes but get a new object
 
 ---
 
-# DB example of copy constructor use
+# Using the copy constructor
+
+```kotlin
+data class Pagechat(val id: Int, val url: String, val fresh: Boolean) {
+    constructor(url: String, fresh: Boolean) : this(0, url, fresh)
+}
+
+...
+
+
+fun createPagechat(url: String, fresh: Boolean) {
+    val pagechat = Pagechat("http://foobar.com", true)
+    val newId = dao.insert(pagechat)
+    return pagechat.copy(id = newId)
+}
+```
+
+^Create an object, then insert in to DB to get ID
 
 ---
 
@@ -264,36 +334,23 @@ enum class Matcher(val cssQuery: String,
 ```
 
 ^Make string enum without looking it up on Stack Overflow
-
 ---
 
-# Lambdas
+# Multiple classes per file
 
 ```kotlin
-enum class Matcher(val cssQuery: String,
-                   val accessor: (Element?) -> String?) {
-    OG_TITLE("meta[prop=og:t]", { it?.attr("content") }),
-        ...
+@Path("/v{version:[1]}/users")
+@Produces(MediaType.APPLICATION_JSON)
+class UserResource {
+    …
 }
 
-// Elsewhere
-val image: String? = matcher.accessor.invoke(element)
-```
-<a name="kotlin-lambda"/>
-#### also in [Java](#java-lambda)
-
----
-
-# String interpolation
-
-```kotlin
-val foo = "foobar"
-println("The variable is $foo")
+data class UpdateLocationRequest(val ip: String)
+data class RegisterDeviceRequest(val token: String, val type: DeviceId.Type)
+data class PushNotificationRequest(val title: String, val body: String, …)
 ```
 
----
-
-# Webapp example of tiny classes in file
+^Kotlin allows multiple classes per file—great for small request classes
 
 ---
 
@@ -311,12 +368,34 @@ class Obama: President(HandSize.NORMAL) {
     override fun showTie(): String { return "It's a normal tie" }
 }
 
-class Trump : President(HandSize.SMALL) {
+class Trump: President(HandSize.SMALL) {
     override fun showTie(): String { return "Just too long" }
 }
 ```
 
 ^Single-class-per-file is a good model most of the time, but lifting that restriction can really help organization
+
+---
+
+# Simpler lambdas
+
+```java
+takesLambdaArg(e -> e.getValue())
+```
+
+```kotlin
+takesLambdaArg({ it.getValue() })
+```
+
+---
+
+# String interpolation
+
+```kotlin
+val foo = "foobar"
+println("The variable is $foo")
+// The variable is foobar
+```
 
 ---
 
@@ -362,67 +441,3 @@ http://dinomite.net
 ---
 
 
-
-
----
-
-# Hello, world! (java)
-
-```java
-package demo;
-
-public static void main(Array<String> args) {
-    try {
-        System.out.println("Hello, world!");
-    } catch (HatefulException e) {
-        e.printStackTrace();
-    }
-}
-```
-<a name="java-hello-world"/>
-#### (note: slightly embellished) [Back to Kotlin](#kotlin-hello-world)
-
----
-
-# POJO
-
-```java
-public class Pagechat {
-    private int id;
-    private String url;
-    private boolean fresh;
-
-    public Pagechat(int id, String url, boolean fresh) {
-        this.id = id;
-        this.url = url;
-        this.fresh = fresh;
-    }
-
-    public int getId() { return id; }
-    public String getUrl() { return url; }
-    public boolean getFresh() { return fresh; }
-}
-```
-<a name="pojo"/>
-#### (note: condensed for presentation) [Oh god, take me back](#kotlin-data-class)
-
----
-
-# Lambdas in Java
-
-```java
-public class Matcher {
-    public final Function<Element, String> accessor;
-
-    public Matcher(Function<Element, String> accessor) {
-        this.accessor = accessor;
-    }
-}
-
-// Elsewhere
-Matcher matcher = new Matcher("meta[prop=og:t]", (e) -> e.attr("content")),
-String value = matcher.accessor.apply(element)
-```
-
-<a name="java-lambda"/>
-#### (note: condensed for presentation) [Oh god, take me back](#kotlin-lambda)
