@@ -1,7 +1,7 @@
 slidenumbers: true
-footer: Drew Stephens <drew@dinomite.net>
+footer: Drew Stephens • <drew@dinomite.net> • [github.com/dinomite/talks](https://github.com/dinomite/talks)
 
-# [fit] Kotlin
+#[fit] Kotlin
 [.hide-footer]
 
 Drew Stephens
@@ -14,10 +14,12 @@ Drew Stephens
 
 # What do I know?
 
+- JVM (Java, Groovy, Kotlin)
+- Ruby & Rails
 - Perl and Regexes
 - PHP (5.3/5.4)
-- Ruby & Rails
-- JVM (Java, Groovy, Kotlin)
+- JavaScript when I have to
+- Android & iOS in a pinch
 
 ---
 
@@ -31,6 +33,117 @@ Drew Stephens
 [^1]: If you use the [correct IDE](https://www.jetbrains.com/idea/)
 
 ^Last point is important because it's well supported
+
+---
+
+#[fit] ———————————
+#[fit] ———————————
+#[fit] ———————————
+#[fit] ———————————
+#[fit] ———————————
+
+---
+
+# Hate Java
+
+<br>
+
+# Don't hate types
+
+^I'll argue that many developers who think static typing is bad really just think Java is bad
+
+^Lots of Rails comparisons because it encourages an object oriented style and project structure similar to Java
+
+---
+
+Static      | Dynamic
+---         | ---
+Java        | Ruby
+C#          | Python
+ObjectiveC  | JavaScript
+Swift       | Perl
+Kotlin      | PHP
+Groovy      | Groovy 🤷
+
+^All of those dynamic langauges have JVM implementations
+
+^Conflating strong vs. weak typing here
+
+---
+
+# Statics, generally
+
+- No misspelled variables
+- Unit tests cover functionality, not borders
+- Easy refactoring, thanks to powerful tools
+- Hard to break things accidentally
+- No tracking down parameters
+- Much less reading the source APIs you're using
+
+^In Ruby, much of our unit tests are covering things coming and going from a functions.  Defined types obviate this.
+
+---
+
+# Param checking in Ruby
+
+```ruby
+def check_params
+    has_required_params = params.key?(:site_rule) && params.key?(:test_url)
+    fail ActionController::ParameterMissing unless has_base_params
+
+    site_rule = params[:site_rule]
+
+    fail ActionController::ParameterMissing unless
+        site_rule.key?(:domain) && site_rule.key?(:action) && site_rule.key?(:regex)
+end
+
+def test_rule
+    params[:site_rule][:domain]
+    ...
+end
+```
+
+^Manually check params; potential to mis-spell in check or in method
+
+---
+
+# Param checking in Kotlin
+
+```kotlin
+// Domain types
+data class SiteRule(val domain: String, val action: Action, val regex: Regex)
+enum class Action { BLACKLISTED, TRANSMOGRIFY_URL, REPLACE, DOWNCASE }
+
+// Specific to controller
+data class SiteRuleTest(val siteRule: SiteRule, val testUrl: String)
+
+fun testRule(toTest: SiteRuleTest): Boolean {
+    // Guaranteed to be well-formed
+    toTest.siteRule.domain
+    ...
+}
+```
+
+^Params automatically checked, can use the types elsewhere
+
+---
+
+# Kotlin, specifically
+
+- No nulls (if you embrace it)
+
+# vs. Java
+
+- No primitive types
+- Type inference lessens the burden
+
+---
+
+#[fit] ———————————
+#[fit] ———————————
+#[fit] ———————————
+#[fit] ———————————
+#[fit] ———————————
 
 ---
 
@@ -67,10 +180,10 @@ No semicolons, default visibility is public, no void return type, static replace
 
 ---
 
-# [fit] No
-# [fit] more
-# [fit] checked
-# [fit] exceptions
+#[fit] No
+#[fit] more
+#[fit] checked
+#[fit] exceptions
 
 ^Kotlin doesn't have checked exceptions
 
@@ -399,7 +512,7 @@ println("The variable is $foo")
 
 ---
 
-# [fit] How do I use it?
+#[fit] How do I use it?
 
 ---
 
@@ -433,11 +546,8 @@ Kotlin docs—https://kotlinlang.org/docs/reference/
 
 Try Kotlin in your browser—http://try.kotlinlang.org/
 
-# Drew
+**Drew**
 @dinomite on Twitter
 drew@dinomite.net
 http://dinomite.net
-
----
-
-
+https://github.com/dinomite
