@@ -361,14 +361,6 @@ val grid = qualified.map { cars[it] }
 
 ---
 
-# Class visibility
-
-- Default public
-- Default final
-
-
----
-
 # POJO
 
 ```java
@@ -422,7 +414,6 @@ data class Pagechat(val id: Int, val url: String, val fresh: Boolean) {
 }
 
 ...
-
 
 fun createPagechat(url: String, fresh: Boolean) {
     val pagechat = Pagechat("http://foobar.com", true)
@@ -490,6 +481,32 @@ class Trump: President(HandSize.SMALL) {
 
 ---
 
+# Named arguments & defaults
+
+```kotlin
+data class User(name: String, email: String, admin: Boolean = false)
+
+...
+
+val drew = User("Drew", "drew@dinomite.net")
+// drew.admin is false
+
+val plague = User("The Plague", "babbage@ellingson.com", true)
+// plague.admin is true
+
+val named = User(email = "foo@bar.com", name = "Foo Bar")
+```
+
+---
+
+#[fit] ———————————
+#[fit] ———————————
+#[fit] ———————————
+#[fit] ———————————
+#[fit] ———————————
+
+---
+
 # Simpler lambdas
 
 ```java
@@ -500,6 +517,8 @@ takesLambdaArg(e -> e.getValue())
 takesLambdaArg({ it.getValue() })
 ```
 
+^Debatable
+
 ---
 
 # String interpolation
@@ -509,6 +528,8 @@ val foo = "foobar"
 println("The variable is $foo")
 // The variable is foobar
 ```
+
+^Just a small improvement over Java; there are many of these
 
 ---
 
