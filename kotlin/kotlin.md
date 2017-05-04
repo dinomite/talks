@@ -5,8 +5,10 @@ footer: Drew Stephens • <drew@dinomite.net> • [github.com/dinomite/talks](ht
 [.hide-footer]
 
 Drew Stephens
-@dinomite
 \<drew@dinomite.net\>
+[@dinomite](https://twitter.com/dinomite)
+
+[Forum For All](https://forumforall.net)
 
 ^Software engineer; Forum for All, chat to websites
 
@@ -14,12 +16,15 @@ Drew Stephens
 
 # What do I know?
 
-- JVM (Java, Groovy, Kotlin)
-- Ruby & Rails
-- Perl and Regexes
-- PHP (5.3/5.4)
-- JavaScript when I have to
+- JVM (Java<sup>1.4–8</sup>, Kotlin<sup>M14–1.1</sup>, Groovy<sup>1.5</sup>)
+- Ruby<sup>1.9–2.4</sup> & Rails<sup>3.0–5.0</sup>
+- Perl<sup>5.5–5.12</sup>
+- PHP<sup>5.2–5.3</sup>
+- JavaScript<sup>1.5–ECMAScript 6/ES2016/ES6 Harmony/WTF</sup> (when I have to)
 - Android & iOS in a pinch
+
+^Version numbers for understanding of where I'm coming from
+^I'll make references to Groovy, but that was pre-2.0 (which added static compilation)
 
 ---
 
@@ -54,6 +59,8 @@ Drew Stephens
 
 ^Lots of Rails comparisons because it encourages an object oriented style and project structure similar to Java
 
+^Java is the flag bearer for staticly typed languages
+
 ---
 
 Static      | Dynamic
@@ -73,12 +80,26 @@ Groovy      | Groovy 🤷
 
 # Statics, generally
 
-- No misspelled variables
-- Unit tests cover functionality, not borders
+```kotlin
+int foo = 7;
+foo = "bar"; // compile error
+if (foo == "bar") { // compile error
+...
+}
+```
+
+- Prevents misspelled variables
+- Catch NoMethodError, NameError, undefined early
+- Unit tests can cover functionality, not borders
+
+---
+
+# Productivity
+
 - Easy refactoring, thanks to powerful tools
 - Hard to break things accidentally
-- No tracking down parameters
 - Much less reading the source APIs you're using
+- No tracking down parameters
 
 ^In Ruby, much of our unit tests are covering things coming and going from a functions.  Defined types obviate this.
 
@@ -87,19 +108,21 @@ Groovy      | Groovy 🤷
 # Param checking in Ruby
 
 ```ruby
-def check_params
-    has_required_params = params.key?(:site_rule) && params.key?(:test_url)
-    fail ActionController::ParameterMissing unless has_base_params
-
-    site_rule = params[:site_rule]
-
-    fail ActionController::ParameterMissing unless
-        site_rule.key?(:domain) && site_rule.key?(:action) && site_rule.key?(:regex)
-end
-
 def test_rule
+    check_params
+
     params[:site_rule][:domain]
     ...
+end
+
+def check_params
+    has_required_params = params.key?(:site_rule) && params.key?(:test_url)
+    fail ActionController::ParameterMissing unless has_required_params
+
+    site_rule = params[:site_rule]
+    fail ActionController::ParameterMissing
+        unless site_rule.key?(:domain) && site_rule.key?(:action) && site_rule.key?(:regex)
+    // Doesn't verify types of site_rule bits
 end
 ```
 
@@ -110,18 +133,19 @@ end
 # Param checking in Kotlin
 
 ```kotlin
+@Consumes(MediaType.APPLICATION_JSON)
+fun testRule(toTest: SiteRuleTest): Boolean {
+    // Guaranteed to be well-formed
+    toTest.siteRule.domain
+    ...
+}
+
 // Domain types
 data class SiteRule(val domain: String, val action: Action, val regex: Regex)
 enum class Action { BLACKLISTED, TRANSMOGRIFY_URL, REPLACE, DOWNCASE }
 
 // Specific to controller
 data class SiteRuleTest(val siteRule: SiteRule, val testUrl: String)
-
-fun testRule(toTest: SiteRuleTest): Boolean {
-    // Guaranteed to be well-formed
-    toTest.siteRule.domain
-    ...
-}
 ```
 
 ^Params automatically checked, can use the types elsewhere
@@ -562,13 +586,15 @@ dependencies {
 
 ---
 
-# Tell me more
+**Tell me more**
 Kotlin docs—https://kotlinlang.org/docs/reference/
 
 Try Kotlin in your browser—http://try.kotlinlang.org/
 
-**Drew**
-@dinomite on Twitter
-drew@dinomite.net
-http://dinomite.net
-https://github.com/dinomite
+My Kotlin repos—[https://github.com/dinomite](https://github.com/dinomite)
+
+**Drew Stephens**
+\<drew@dinomite.net\>
+[@dinomite](https://twitter.com/dinomite)
+
+[https://forumforall.net](https://forumforall.net)
