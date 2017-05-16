@@ -247,9 +247,18 @@ val foo = "Foo" // is a String
 
 # Null safety
 
-```kotlin
+```kotlin, [.highlight: 1-2]
 var neverNull: String = "foobar"
 var maybeNull: String? = "baz"
+
+neverNull = null   // Compiler error
+neverNull.length   // Guaranteed OK
+
+maybeNull.length   // Compiler error
+maybeNull?.length  // Possible null instead of length
+maybeNull!!.length // Possible NPE
+
+var valueOrSadness = maybeNull ?: "it was null 😞"
 ```
 
 ^One of the most important differences is null safety
@@ -260,63 +269,7 @@ var maybeNull: String? = "baz"
 
 # Null safety
 
-```kotlin
-var neverNull: String = "foobar"
-var maybeNull: String? = "baz"
-
-neverNull = null   // Compiler error
-```
-
-^We love typed languages because they give us errors early—Kotlin won't let you get into a situation where you could have an NPE
-
----
-
-# Null safety
-
-```kotlin
-var neverNull: String = "foobar"
-var maybeNull: String? = "baz"
-
-neverNull = null   // Compiler error
-neverNull.length   // Guaranteed OK
-```
-
----
-
-# Null safety
-
-```kotlin
-var neverNull: String = "foobar"
-var maybeNull: String? = "baz"
-
-neverNull = null   // Compiler error
-neverNull.length   // Guaranteed OK
-
-maybeNull.length   // Compiler error
-```
-
----
-
-# Null safety
-
-```kotlin
-var neverNull: String = "foobar"
-var maybeNull: String? = "baz"
-
-neverNull = null   // Compiler error
-neverNull.length   // Guaranteed OK
-
-maybeNull.length   // Compiler error
-maybeNull?.length  // Possible null instead of length
-```
-
-^If you're really ok with returning null, Kotlin will let you, but you have to be explicit
-
----
-
-# Null safety
-
-```kotlin
+```kotlin, [.highlight: 4]
 var neverNull: String = "foobar"
 var maybeNull: String? = "baz"
 
@@ -326,6 +279,84 @@ neverNull.length   // Guaranteed OK
 maybeNull.length   // Compiler error
 maybeNull?.length  // Possible null instead of length
 maybeNull!!.length // Possible NPE
+
+var valueOrSadness = maybeNull ?: "it was null 😞"
+```
+
+^We love typed languages because they give us errors early—Kotlin won't let you get into a situation where you could have an NPE
+
+---
+
+# Null safety
+
+```kotlin, [.highlight: 5]
+var neverNull: String = "foobar"
+var maybeNull: String? = "baz"
+
+neverNull = null   // Compiler error
+neverNull.length   // Guaranteed OK
+
+maybeNull.length   // Compiler error
+maybeNull?.length  // Possible null instead of length
+maybeNull!!.length // Possible NPE
+
+var valueOrSadness = maybeNull ?: "it was null 😞"
+```
+
+---
+
+# Null safety
+
+```kotlin, [.highlight: 7]
+var neverNull: String = "foobar"
+var maybeNull: String? = "baz"
+
+neverNull = null   // Compiler error
+neverNull.length   // Guaranteed OK
+
+maybeNull.length   // Compiler error
+maybeNull?.length  // Possible null instead of length
+maybeNull!!.length // Possible NPE
+
+var valueOrSadness = maybeNull ?: "it was null 😞"
+```
+
+---
+
+# Null safety
+
+```kotlin, [.highlight: 8]
+var neverNull: String = "foobar"
+var maybeNull: String? = "baz"
+
+neverNull = null   // Compiler error
+neverNull.length   // Guaranteed OK
+
+maybeNull.length   // Compiler error
+maybeNull?.length  // Possible null instead of length
+maybeNull!!.length // Possible NPE
+
+var valueOrSadness = maybeNull ?: "it was null 😞"
+```
+
+^If you're really ok with returning null, Kotlin will let you, but you have to be explicit
+
+---
+
+# Null safety
+
+```kotlin, [.highlight: 9]
+var neverNull: String = "foobar"
+var maybeNull: String? = "baz"
+
+neverNull = null   // Compiler error
+neverNull.length   // Guaranteed OK
+
+maybeNull.length   // Compiler error
+maybeNull?.length  // Possible null instead of length
+maybeNull!!.length // Possible NPE
+
+var valueOrSadness = maybeNull ?: "it was null 😞"
 ```
 
 ^You can also just be stupid
@@ -334,7 +365,7 @@ maybeNull!!.length // Possible NPE
 
 # Null safety
 
-```kotlin
+```kotlin, [.highlight: 11]
 var neverNull: String = "foobar"
 var maybeNull: String? = "baz"
 
