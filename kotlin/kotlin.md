@@ -1,5 +1,5 @@
 slidenumbers: true
-footer: Drew Stephens • <drew@dinomite.net> • [github.com/dinomite/talks](https://github.com/dinomite/talks)
+footer: Drew Stephens • \<drew@dinomite.net\> • [github.com/dinomite/talks](https://github.com/dinomite/talks)
 
 #[fit] Kotlin
 [.hide-footer]
@@ -25,6 +25,7 @@ Drew Stephens
 
 ^Version numbers for understanding of where I'm coming from
 ^I'll make references to Groovy, but that was pre-2.0 (which added static compilation)
+^I'm not a language nerd (don't ask me about Agda or even Haskell)
 
 ---
 
@@ -43,7 +44,7 @@ Drew Stephens
 
 #[fit] ———————————
 #[fit] ———————————
-#[fit] ———————————
+#[fit] Statics
 #[fit] ———————————
 #[fit] ———————————
 
@@ -84,18 +85,33 @@ Groovy      | Groovy 🤷
 int foo = 7;
 foo = "bar"; // compile error
 if (foo == "bar") { // compile error
-...
+    ...
+}
+
+if (fooo == 7) { //compile error
+    ...
 }
 ```
 
 - Prevents misspelled variables
 - Catch NoMethodError, NameError, undefined early
-- Unit tests can cover functionality, not borders
+
+---
+
+# Clarity
+
+- Share your intent with computers and humans
+- Reduce cognitive load
+
+^When you're writing code, you have types in your head; they are part of the understanding
+
+^Specifying those types helps you reduce the amount you need in your working memory
 
 ---
 
 # Productivity
 
+- Unit tests can cover functionality, not borders
 - Easy refactoring, thanks to powerful tools
 - Hard to break things accidentally
 - Much less reading the source APIs you're using
@@ -140,12 +156,12 @@ fun testRule(toTest: SiteRuleTest): Boolean {
     ...
 }
 
+// Specific to controller
+data class SiteRuleTest(val siteRule: SiteRule, val testUrl: String)
+
 // Domain types
 data class SiteRule(val domain: String, val action: Action, val regex: Regex)
 enum class Action { BLACKLISTED, TRANSMOGRIFY_URL, REPLACE, DOWNCASE }
-
-// Specific to controller
-data class SiteRuleTest(val siteRule: SiteRule, val testUrl: String)
 ```
 
 ^Params automatically checked, can use the types elsewhere
@@ -165,7 +181,7 @@ data class SiteRuleTest(val siteRule: SiteRule, val testUrl: String)
 
 #[fit] ———————————
 #[fit] ———————————
-#[fit] ———————————
+#[fit] Features
 #[fit] ———————————
 #[fit] ———————————
 
@@ -178,8 +194,8 @@ package demo;
 
 public static void main(Array<String> args) {
     try {
-        System.out.println("Hello, world!");
-    } catch (HatefulException e) {
+        System.out.printf("Hello, world!");
+    } catch (IllegalFormatException e) {
         e.printStackTrace();
     }
 }
@@ -221,6 +237,8 @@ No semicolons, default visibility is public, no void return type, static replace
 
 ```kotlin
 val foo = "Foo" // is a String
+// Java
+// final String foo = "Foo";
 ```
 
 ^Using final in Java provides guarantees for threading; immutable by default
@@ -327,7 +345,7 @@ maybeNull.length   // Compiler error
 maybeNull?.length  // Possible null instead of length
 maybeNull!!.length // Possible NPE
 
-var valueOrNegativeOne = maybeNull ?: -1
+var valueOrSadness = maybeNull ?: "it was null 😞"
 ```
 
 ^Finally, the Elvis operator makes returning a default instead of null easy
@@ -339,13 +357,30 @@ var valueOrNegativeOne = maybeNull ?: -1
 ```kotlin
 if (maybeNull != null && maybeNull.length > 5) {
     // maybeNull guaranteed to not be
-    print("That's a long string!")
+    print("It is ${maybeNull.length} characters")
 } else {
-    print("The string was null 😢")
+    print("The variable is null 😢")
 }
 ```
 
 ^Null values are easy to handle because the compiler will track their nullibility
+
+---
+
+# Embracing null[^2]
+
+```kotlin
+fun findUser(id: Int): User?
+
+...
+
+findUser(7)?.let {
+    // Only executes if user exists
+    it.transmogrify(42)
+}
+```
+
+[^2]: http://beust.com/weblog/2016/01/14/a-close-look-at-kotlins-let/
 
 ---
 
@@ -360,6 +395,10 @@ fun returnsAListOfStrings(): List<String> {
 
 val listOfStrings = returnsAListOfStrings()
 val firstString = listOfStrings[0]
+
+// Java
+// final List<String> listOfStrings = returnsAListOfStrings();
+// final String firstString = listOfStrings[0];
 ```
 
 ^The compiler can infer types
@@ -375,6 +414,7 @@ val cars = mapOf(
             …
         )
 val qualified = listOf(44, 5, 77, 7, 33, …)
+...
 val grid = qualified.map { cars[it] }
 // Java:   qualified.stream().map(e -> cars.get(e))
 
@@ -439,14 +479,49 @@ data class Pagechat(val id: Int, val url: String, val fresh: Boolean) {
 
 ...
 
-fun createPagechat(url: String, fresh: Boolean) {
+fun createPagechat(url: String, fresh: Boolean): Pagechat {
     val pagechat = Pagechat("http://foobar.com", true)
+    // { id: 0, url: "http://foobar.com", fresh: true }
     val newId = dao.insert(pagechat)
     return pagechat.copy(id = newId)
+    // { id: $newId, url: "http://foobar.com", fresh: true }
 }
 ```
 
+^Functional programming (immutability)
+
 ^Create an object, then insert in to DB to get ID
+
+---
+
+# Better `switch` statement (`when`)
+
+```kotlin
+when (view) {
+    is TextView -> toast(view.text)
+    is RecyclerView -> toast("Item count = ${view.adapter.itemCount}")
+    is SearchView -> toast("Current query: ${view.query}")
+    else -> toast("View type not supported")
+}
+```
+
+^Example from Android; note auto-casting
+
+---
+
+# Better try-with-resources
+
+```kotlin
+OutputStreamWriter(r.getOutputStream()).use {
+    // by `it` value you can get your OutputStreamWriter
+    it.write('a')
+}
+
+// Java
+// try (OutputStreamWriter it = r.getOutputStream()) {
+//     it.write('a')
+// }
+```
 
 ---
 
@@ -462,6 +537,7 @@ enum class Matcher(val cssQuery: String,
 ```
 
 ^Make string enum without looking it up on Stack Overflow
+
 ---
 
 # Multiple classes per file
@@ -478,30 +554,9 @@ data class RegisterDeviceRequest(val token: String, val type: DeviceId.Type)
 data class PushNotificationRequest(val title: String, val body: String, …)
 ```
 
-^Kotlin allows multiple classes per file—great for small request classes
-
----
-
-```kotlin
-// Presidents.kt
-package net.dinomite.pretend
-
-abstract class President(val handSize: HandSize) {
-    abstract fun showTie(): String
-
-    enum class HandSize { SMALL, NORMAL }
-}
-
-class Obama: President(HandSize.NORMAL) {
-    override fun showTie(): String { return "It's a normal tie" }
-}
-
-class Trump: President(HandSize.SMALL) {
-    override fun showTie(): String { return "Just too long" }
-}
-```
-
 ^Single-class-per-file is a good model most of the time, but lifting that restriction can really help organization
+
+^Kotlin allows multiple classes per file—great for small request classes
 
 ---
 
@@ -523,11 +578,99 @@ val named = User(email = "foo@bar.com", name = "Foo Bar")
 
 ---
 
+# Tail recursion[^4]
+
+```kotlin
+tailrec fun findFixPoint(x: Double = 1.0): Double {
+    val cosine = Math.cos(x)
+    if (x == cosine) {
+        return x
+    } else {
+        return findFixPoint(cosine)
+    }
+}
+```
+
+```kotlin
+// Shorter
+tailrec fun findFixPoint(x: Double = 1.0): Double
+        = if (x == Math.cos(x)) x else findFixPoint(Math.cos(x))
+```
+
+[^4]: https://kotlinlang.org/docs/reference/functions.html#tail-recursive-functions
+
+---
+
+#[fit] ———————————
+#[fit] ———————————
+#[fit] How?
+#[fit] ———————————
+#[fit] ———————————
+
+---
+
+#[fit] How do I use it?
+
+---
+
+# build.gradle
+
+```groovy
+buildscript {
+    ext.kotlin_version = '1.1.1'
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+apply plugin: 'kotlin'
+```
+
+^If you're still using Maven, rethink your life choices
+
+---
+
+**Tell me more**
+- Kotlin docs—[https://kotlinlang.org/docs/reference/]()
+- Try Kotlin in your browser—[http://try.kotlinlang.org/]()
+- My Kotlin repos—[https://github.com/dinomite](https://github.com/dinomite)
+- Dynamic vs Static—[https://youtu.be/Uxl_X3zXVAM](https://youtu.be/Uxl_X3zXVAM)
+
+**Drew Stephens**
+\<drew@dinomite.net\>
+[@dinomite](https://twitter.com/dinomite)
+
+[https://forumforall.net](https://forumforall.net)
+
+---
+
 #[fit] ———————————
 #[fit] ———————————
 #[fit] ———————————
 #[fit] ———————————
 #[fit] ———————————
+
+---
+
+# JSON[^3]
+
+```json
+{
+    "id": 7,
+    "email": "drew@dinomite.net"
+}
+```
+
+```kotlin
+data class User(id: Int, email: String)
+```
+
+[^3]: https://medium.com/square-corner-blog/kotlins-a-great-language-for-json-fcd6ef99256b
+
+^Easy to create data model and get type safety
 
 ---
 
@@ -555,46 +698,3 @@ println("The variable is $foo")
 
 ^Just a small improvement over Java; there are many of these
 
----
-
-#[fit] How do I use it?
-
----
-
-# build.gradle
-
-```groovy
-buildscript {
-    ext.kotlin_version = '1.1.1'
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-    }
-}
-
-apply plugin: 'java'
-apply plugin: 'kotlin'
-
-dependencies {
-    compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
-}
-```
-
-^If you're still using Maven, rethink your life choices
-
----
-
-**Tell me more**
-Kotlin docs—https://kotlinlang.org/docs/reference/
-
-Try Kotlin in your browser—http://try.kotlinlang.org/
-
-My Kotlin repos—[https://github.com/dinomite](https://github.com/dinomite)
-
-**Drew Stephens**
-\<drew@dinomite.net\>
-[@dinomite](https://twitter.com/dinomite)
-
-[https://forumforall.net](https://forumforall.net)
