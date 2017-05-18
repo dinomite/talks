@@ -83,9 +83,10 @@ Groovy      | Groovy 🤷
 
 # Statics, generally
 
-```kotlin
+```kotlin, [.highlight: 1]
 int foo = 7;
 foo = "bar"; // compile error
+
 if (foo == "bar") { // compile error
     ...
 }
@@ -95,8 +96,66 @@ if (fooo == 7) { // compile error
 }
 ```
 
+---
+
+# Statics, generally
+
+```kotlin, [.highlight: 2]
+int foo = 7;
+foo = "bar"; // compile error
+
+if (foo == "bar") { // compile error
+    ...
+}
+
+if (fooo == 7) { // compile error
+    ...
+}
+```
+
+---
+
+# Statics, generally
+
+```kotlin, [.highlight: 4-6]
+int foo = 7;
+foo = "bar"; // compile error
+
+if (foo == "bar") { // compile error
+    ...
+}
+
+if (fooo == 7) { // compile error
+    ...
+}
+```
+
+---
+
+# Statics, generally
+
+```kotlin, [.highlight: 8-10]
+int foo = 7;
+foo = "bar"; // compile error
+
+if (foo == "bar") { // compile error
+    ...
+}
+
+if (fooo == 7) { // compile error
+    ...
+}
+```
+
+---
+
+# Statics, generally
+
 - Prevents misspelled variables
 - Catch NoMethodError, NameError, undefined early
+- Add context to the code
+
+^Example: Ruby HashWithIndifferentAccess
 
 ^Types are in your head; part of understanding
 
@@ -106,7 +165,7 @@ if (fooo == 7) { // compile error
 
 # Equality
 
-![inline](videos/static-equality.mov)
+![inline](videos/static-errors.mov)
 
 ---
 
@@ -128,7 +187,7 @@ if (fooo == 7) { // compile error
 
 ```json
 {
-    "user_id": 7,
+    "user_id": 44,
     "address": {
         "number": 2446,
         "street": "Belmont Rd NW",
@@ -167,12 +226,12 @@ end
 # Param checking in Java
 
 ```java
-boolean updateAddress(UpdateAddress newAddress) {
+boolean updateAddress(AddressRequest newAddress) {
     // Guaranteed to be well-formed
     ...
 }
 
-class UpdateAddress {
+class AddressRequest {
     int userId;
     Address address;
 }
@@ -183,23 +242,6 @@ class Address {
     int zip;
 }
 ```
-
----
-
-# Param checking in Kotlin
-
-```kotlin
-fun updateAddress(newAddress: UpdateAddress): Boolean {
-    // Guaranteed to be well-formed
-    ...
-}
-
-data class UpdateAddress(val userId: Int, val address: Address )
-
-data class Address(val number: Int, val street: String, val zip: Int)
-```
-
-^Params automatically checked, can use the types elsewhere
 
 ---
 
@@ -253,12 +295,15 @@ fun main(args: Array<String>) {
 
 # Variables
 
-- `val`s are read-only (like `final` in Java)
+- `val`s are immutable (read-only; like `final` in Java)
 - `var`s are mutable
 - Type inference
 
 ```kotlin
 val foo = "Foo" // is a String
+foo = "Bar" // nope, can't change a val
+var num = 7
+num = 3 // ok
 // Java
 // final String foo = "Foo";
 ```
@@ -519,6 +564,23 @@ Free stuff:
 
 ^Like Scala case classes
 Free copy constructor is great—change a few attributes but get a new object
+
+---
+
+# Param checking in Kotlin
+
+```kotlin
+fun updateAddress(newAddress: UpdateAddress): Boolean {
+    // Guaranteed to be well-formed
+    ...
+}
+
+data class UpdateAddress(val userId: Int, val address: Address )
+
+data class Address(val number: Int, val street: String, val zip: Int)
+```
+
+^Params automatically checked, can use the types elsewhere
 
 ---
 
