@@ -23,8 +23,10 @@ Drew Stephens
 - JavaScript<sup>1.5–ECMAScript 6/ES2016/ES6 Harmony/WTF</sup> (when I have to)
 - Android & iOS in a pinch
 
-^Version numbers for understanding of where I'm coming from
-^I'll make references to Groovy, but that was pre-2.0 (which added static compilation)
+^Version numbers
+
+^Groovey pre-2.0
+
 ^I'm not a language nerd (don't ask me about Agda or even Haskell)
 
 ---
@@ -48,6 +50,8 @@ Drew Stephens
 #[fit] ———————————
 #[fit] ———————————
 
+^First, an aside
+
 ---
 
 # Hate Java
@@ -56,9 +60,7 @@ Drew Stephens
 
 # Don't hate types
 
-^I'll argue that many developers who think static typing is bad really just think Java is bad
-
-^Lots of Rails comparisons because it encourages an object oriented style and project structure similar to Java
+^Java is bad
 
 ^Java is the flag bearer for staticly typed languages
 
@@ -88,7 +90,7 @@ if (foo == "bar") { // compile error
     ...
 }
 
-if (fooo == 7) { //compile error
+if (fooo == 7) { // compile error
     ...
 }
 ```
@@ -96,16 +98,15 @@ if (fooo == 7) { //compile error
 - Prevents misspelled variables
 - Catch NoMethodError, NameError, undefined early
 
+^Types are in your head; part of understanding
+
+^Reduce cognitive load
+
 ---
 
-# Clarity
+# Equality
 
-- Share your intent with computers and humans
-- Reduce cognitive load
-
-^When you're writing code, you have types in your head; they are part of the understanding
-
-^Specifying those types helps you reduce the amount you need in your working memory
+![inline](videos/static-equality.mov)
 
 ---
 
@@ -121,24 +122,41 @@ if (fooo == 7) { //compile error
 
 ---
 
+# Updating a user's address
+
+`POST /address`
+
+```json
+{
+    "user_id": 7,
+    "address": {
+        "number": 2446,
+        "street": "Belmont Rd NW",
+        "zip": 20008
+    }
+}
+```
+
+^This is my friend's house
+
+---
+
 # Param checking in Ruby
 
 ```ruby
-def test_rule
+def update_address
     check_params
-
-    params[:site_rule][:domain]
     ...
 end
 
-def check_params
-    has_required_params = params.key?(:site_rule) && params.key?(:test_url)
+def check_address_params
+    required_params = params.key?(:user_id) && params.key?(:address)
     fail ActionController::ParameterMissing unless has_required_params
 
-    site_rule = params[:site_rule]
+    address = params[:address]
     fail ActionController::ParameterMissing
-        unless site_rule.key?(:domain) && site_rule.key?(:action) && site_rule.key?(:regex)
-    // Doesn't verify types of site_rule bits
+        unless address.key?(:number) && address.key?(:street) && address.key?(:zip)
+    # Doesn't verify types of anything
 end
 ```
 
@@ -146,36 +164,42 @@ end
 
 ---
 
-# Param checking in Kotlin
+# Param checking in Java
 
-```kotlin
-@Consumes(MediaType.APPLICATION_JSON)
-fun testRule(toTest: SiteRuleTest): Boolean {
+```java
+boolean updateAddress(UpdateAddress newAddress) {
     // Guaranteed to be well-formed
-    toTest.siteRule.domain
     ...
 }
 
-// Specific to controller
-data class SiteRuleTest(val siteRule: SiteRule, val testUrl: String)
+class UpdateAddress {
+    int userId;
+    Address address;
+}
 
-// Domain types
-data class SiteRule(val domain: String, val action: Action, val regex: Regex)
-enum class Action { BLACKLISTED, TRANSMOGRIFY_URL, REPLACE, DOWNCASE }
+class Address {
+    int number;
+    String street;
+    int zip;
+}
 ```
-
-^Params automatically checked, can use the types elsewhere
 
 ---
 
-# Kotlin, specifically
+# Param checking in Kotlin
 
-- No nulls (if you embrace it)
+```kotlin
+fun updateAddress(newAddress: UpdateAddress): Boolean {
+    // Guaranteed to be well-formed
+    ...
+}
 
-# vs. Java
+data class UpdateAddress(val userId: Int, val address: Address )
 
-- No primitive types
-- Type inference lessens the burden
+data class Address(val number: Int, val street: String, val zip: Int)
+```
+
+^Params automatically checked, can use the types elsewhere
 
 ---
 
@@ -210,22 +234,20 @@ public static void main(Array<String> args) {
 ```kotlin
 package demo
 
-fun main(args : Array<String>) {
+fun main(args: Array<String>) {
   println("Hello, world!")
 }
 ```
 
 ^Kotlin is cleaner and more concise than Java
-No semicolons, default visibility is public, no void return type, static replaced by top-level functions
 
----
+^No semicolons
 
-#[fit] No
-#[fit] more
-#[fit] checked
-#[fit] exceptions
+^default public
 
-^Kotlin doesn't have checked exceptions
+^no void return type
+
+^static replaced by top-level functions
 
 ---
 
@@ -398,61 +420,60 @@ if (maybeNull != null && maybeNull.length > 5) {
 
 ---
 
-# Embracing null[^2]
-
-```kotlin
-fun findUser(id: Int): User?
-
-...
-
-findUser(7)?.let {
-    // Only executes if user exists
-    it.transmogrify(42)
-}
-```
-
-[^2]: http://beust.com/weblog/2016/01/14/a-close-look-at-kotlins-let/
-
----
-
 # Type inference
 
-```kotlin
+```kotlin, [.highlight: 1-3]
 fun returnsAListOfStrings(): List<String> {
     return listOf("foo", "bar")
 }
 
-// ...
-
-val listOfStrings = returnsAListOfStrings()
-val firstString = listOfStrings[0]
-
 // Java
 // final List<String> listOfStrings = returnsAListOfStrings();
 // final String firstString = listOfStrings[0];
+
+val listOfStrings = returnsAListOfStrings()
+val firstString = listOfStrings[0]
 ```
 
 ^The compiler can infer types
 
 ---
 
-# Better streams syntax
+# Type inference
 
-```kotlin
-val cars = mapOf(
-            2 to "Vandoorne", 3 to "Ricciardo",
-            5 to "Vettel", 7 to "Räikkönen",
-            …
-        )
-val qualified = listOf(44, 5, 77, 7, 33, …)
-...
-val grid = qualified.map { cars[it] }
-// Java:   qualified.stream().map(e -> cars.get(e))
+```kotlin, [.highlight: 5-7]
+fun returnsAListOfStrings(): List<String> {
+    return listOf("foo", "bar")
+}
 
-// [Hamilton, Vettel, Bottas, Räikkönen, …]
+// Java
+// final List<String> listOfStrings = returnsAListOfStrings();
+// final String firstString = listOfStrings[0];
+
+val listOfStrings = returnsAListOfStrings()
+val firstString = listOfStrings[0]
 ```
 
-^Note Kotlin's default `it`, map index access
+^The compiler can infer types
+
+---
+
+# Type inference
+
+```kotlin, [.highlight: 8-10]
+fun returnsAListOfStrings(): List<String> {
+    return listOf("foo", "bar")
+}
+
+// Java
+// final List<String> listOfStrings = returnsAListOfStrings();
+// final String firstString = listOfStrings[0];
+
+val listOfStrings = returnsAListOfStrings()
+val firstString = listOfStrings[0]
+```
+
+^The compiler can infer types
 
 ---
 
@@ -504,14 +525,12 @@ Free copy constructor is great—change a few attributes but get a new object
 # Using the copy constructor
 
 ```kotlin
-data class Pagechat(val id: Int, val url: String, val fresh: Boolean) {
-    constructor(url: String, fresh: Boolean) : this(0, url, fresh)
-}
+data class Pagechat(val id: Int, val url: String, val fresh: Boolean)
 
 ...
 
 fun createPagechat(url: String, fresh: Boolean): Pagechat {
-    val pagechat = Pagechat("http://foobar.com", true)
+    val pagechat = Pagechat(0, "http://foobar.com", true)
     // { id: 0, url: "http://foobar.com", fresh: true }
     val newId = dao.insert(pagechat)
     return pagechat.copy(id = newId)
@@ -536,58 +555,7 @@ when (view) {
 }
 ```
 
-^Example from Android; note auto-casting
-
----
-
-# Better try-with-resources
-
-```kotlin
-OutputStreamWriter(r.getOutputStream()).use {
-    // by `it` value you can get your OutputStreamWriter
-    it.write('a')
-}
-
-// Java
-// try (OutputStreamWriter it = r.getOutputStream()) {
-//     it.write('a')
-// }
-```
-
----
-
-# Better enums
-
-```kotlin
-enum class Matcher(val cssQuery: String,
-                   val attr: String) {
-    OG_TITLE("meta[property=og:title]", "content"),
-    META_TITLE("meta[name=title]", "content"),
-    TITLE("title", null)
-}
-```
-
-^Make string enum without looking it up on Stack Overflow
-
----
-
-# Multiple classes per file
-
-```kotlin
-@Path("/v{version:[1]}/users")
-@Produces(MediaType.APPLICATION_JSON)
-class UserResource {
-    …
-}
-
-data class UpdateLocationRequest(val ip: String)
-data class RegisterDeviceRequest(val token: String, val type: DeviceId.Type)
-data class PushNotificationRequest(val title: String, val body: String, …)
-```
-
-^Single-class-per-file is a good model most of the time, but lifting that restriction can really help organization
-
-^Kotlin allows multiple classes per file—great for small request classes
+^Note auto-casting
 
 ---
 
@@ -632,6 +600,41 @@ tailrec fun findFixPoint(x: Double = 1.0): Double
 
 ---
 
+# Better enums
+
+```kotlin
+enum class Matcher(val cssQuery: String,
+                   val attr: String) {
+    OG_TITLE("meta[property=og:title]", "content"),
+    META_TITLE("meta[name=title]", "content"),
+    TITLE("title", null)
+}
+```
+
+^Make string enum without looking it up on Stack Overflow
+
+---
+
+# Better streams syntax
+
+```kotlin
+val cars = mapOf(
+            2 to "Vandoorne", 3 to "Ricciardo",
+            5 to "Vettel", 7 to "Räikkönen",
+            …
+        )
+val qualified = listOf(44, 5, 77, 7, 33, …)
+...
+val grid = qualified.map { cars[it] }
+// Java:   qualified.stream().map(e -> cars.get(e))
+
+// [Hamilton, Vettel, Bottas, Räikkönen, …]
+```
+
+^Note Kotlin's default `it`, map index access
+
+---
+
 #[fit] ———————————
 #[fit] ———————————
 #[fit] How?
@@ -648,12 +651,11 @@ tailrec fun findFixPoint(x: Double = 1.0): Double
 
 ```groovy
 buildscript {
-    ext.kotlin_version = '1.1.1'
     repositories {
         mavenCentral()
     }
     dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.2"
     }
 }
 
@@ -729,3 +731,19 @@ println("The variable is $foo")
 
 ^Just a small improvement over Java; there are many of these
 
+---
+
+# Embracing null[^2]
+
+```kotlin
+fun findUser(id: Int): User?
+
+...
+
+findUser(7)?.let {
+    // Only executes if user exists
+    it.transmogrify(42)
+}
+```
+
+[^2]: http://beust.com/weblog/2016/01/14/a-close-look-at-kotlins-let/
