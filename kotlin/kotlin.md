@@ -16,7 +16,7 @@ Drew Stephens
 
 # What do I know?
 
-- JVM (Java<sup>1.4–8</sup>, Kotlin<sup>M14–1.1</sup>, Groovy<sup>1.5</sup>)
+- JVM (Java<sup>1.4–8</sup>, Kotlin<sup>M14–1.2</sup>, Groovy<sup>1.5</sup>)
 - Ruby<sup>1.9–2.4</sup> & Rails<sup>3.0–5.0</sup>
 - Perl<sup>5.5–5.12</sup>
 - PHP<sup>5.2–5.3</sup>
@@ -44,13 +44,13 @@ Drew Stephens
 
 ---
 
-#[fit] ———————————
-#[fit] ———————————
-#[fit] Statics
-#[fit] ———————————
-#[fit] ———————————
+#[fit] Static
+#[fit] vs.
+#[fit] Dynamic
 
 ^First, an aside
+^================
+^================
 
 ---
 
@@ -96,6 +96,8 @@ if (fooo == 7) { // compile error
 }
 ```
 
+^Declare an integer variable foo
+
 ---
 
 # Statics, generally
@@ -112,6 +114,8 @@ if (fooo == 7) { // compile error
     ...
 }
 ```
+
+^The compiler won't allow you to change the type of data the variable holds
 
 ---
 
@@ -130,6 +134,8 @@ if (fooo == 7) { // compile error
 }
 ```
 
+^The compiler also only allows sensical type comparisons
+
 ---
 
 # Statics, generally
@@ -147,6 +153,8 @@ if (fooo == 7) { // compile error
 }
 ```
 
+^Because of this, the compiler knows what variables exist
+
 ---
 
 # Statics, generally
@@ -163,7 +171,7 @@ if (fooo == 7) { // compile error
 
 ---
 
-# Equality
+# Errors caught early
 
 ![inline](videos/static-errors.mov)
 
@@ -196,7 +204,7 @@ if (fooo == 7) { // compile error
 }
 ```
 
-^This is my friend's house
+^My friend wants to update their address, she used to live at 1600 Pennsylvania Ave, NW
 
 ---
 
@@ -204,12 +212,12 @@ if (fooo == 7) { // compile error
 
 ```ruby
 def update_address
-    check_params
+    check_address_params
     ...
 end
 
 def check_address_params
-    required_params = params.key?(:user_id) && params.key?(:address)
+    has_required_params = params.key?(:user_id) && params.key?(:address)
     fail ActionController::ParameterMissing unless has_required_params
 
     address = params[:address]
@@ -243,13 +251,15 @@ class Address {
 }
 ```
 
+^In Java, we just describe the structure & types of input, the rest is taken care of
+
 ---
 
-#[fit] ———————————
-#[fit] ———————————
-#[fit] Features
-#[fit] ———————————
-#[fit] ———————————
+#[fit] What makes
+#[fit] Kotlin better?
+
+^================
+^================
 
 ---
 
@@ -293,22 +303,24 @@ fun main(args: Array<String>) {
 
 ---
 
-# Variables
+# Immutable variables
 
 - `val`s are immutable (read-only; like `final` in Java)
 - `var`s are mutable
 - Type inference
 
 ```kotlin
-val foo = "Foo" // is a String
-foo = "Bar" // nope, can't change a val
-var num = 7
-num = 3 // ok
-// Java
-// final String foo = "Foo";
+    val foo = "Foo" // is a String
+    // Java: final String foo = "Foo";
+    foo = "Bar"     // nope, can't change a val
+
+    var num = 7     // mutable int variable
+    num = 3         // ok
 ```
 
 ^Using final in Java provides guarantees for threading; immutable by default
+
+^Java 10 also has type inference
 
 ---
 
@@ -319,7 +331,7 @@ var neverNull: String = "foobar"
 var maybeNull: String? = "baz"
 
 neverNull = null   // Compiler error
-neverNull.length   // Guaranteed OK
+neverNull.length   // Guaranteed ok
 
 maybeNull.length   // Compiler error
 maybeNull?.length  // Possible null instead of length
@@ -330,18 +342,18 @@ var valueOrSadness = maybeNull ?: "it was null 😞"
 
 ^One of the most important differences is null safety
 
-^Cleaner than option types
+^Cleaner than Java's Option types
 
 ---
 
 # Null safety
 
-```kotlin, [.highlight: 4]
+```kotlin, [.highlight: 4,5]
 var neverNull: String = "foobar"
 var maybeNull: String? = "baz"
 
 neverNull = null   // Compiler error
-neverNull.length   // Guaranteed OK
+neverNull.length   // Guaranteed ok
 
 maybeNull.length   // Compiler error
 maybeNull?.length  // Possible null instead of length
@@ -350,25 +362,7 @@ maybeNull!!.length // Possible NPE
 var valueOrSadness = maybeNull ?: "it was null 😞"
 ```
 
-^We love typed languages because they give us errors early—Kotlin won't let you get into a situation where you could have an NPE
-
----
-
-# Null safety
-
-```kotlin, [.highlight: 5]
-var neverNull: String = "foobar"
-var maybeNull: String? = "baz"
-
-neverNull = null   // Compiler error
-neverNull.length   // Guaranteed OK
-
-maybeNull.length   // Compiler error
-maybeNull?.length  // Possible null instead of length
-maybeNull!!.length // Possible NPE
-
-var valueOrSadness = maybeNull ?: "it was null 😞"
-```
+^I love typed languages because they give us errors early—Kotlin won't let you get into a situation where you could have an NPE
 
 ---
 
@@ -379,7 +373,7 @@ var neverNull: String = "foobar"
 var maybeNull: String? = "baz"
 
 neverNull = null   // Compiler error
-neverNull.length   // Guaranteed OK
+neverNull.length   // Guaranteed ok
 
 maybeNull.length   // Compiler error
 maybeNull?.length  // Possible null instead of length
@@ -387,6 +381,8 @@ maybeNull!!.length // Possible NPE
 
 var valueOrSadness = maybeNull ?: "it was null 😞"
 ```
+
+^Kotlin won't let you do soemthing dangerous unwittingly
 
 ---
 
@@ -397,7 +393,7 @@ var neverNull: String = "foobar"
 var maybeNull: String? = "baz"
 
 neverNull = null   // Compiler error
-neverNull.length   // Guaranteed OK
+neverNull.length   // Guaranteed ok
 
 maybeNull.length   // Compiler error
 maybeNull?.length  // Possible null instead of length
@@ -406,7 +402,7 @@ maybeNull!!.length // Possible NPE
 var valueOrSadness = maybeNull ?: "it was null 😞"
 ```
 
-^If you're really ok with returning null, Kotlin will let you, but you have to be explicit
+^If you're really ok with getting a null, Kotlin will let you, but you have to be explicit
 
 ---
 
@@ -417,7 +413,7 @@ var neverNull: String = "foobar"
 var maybeNull: String? = "baz"
 
 neverNull = null   // Compiler error
-neverNull.length   // Guaranteed OK
+neverNull.length   // Guaranteed ok
 
 maybeNull.length   // Compiler error
 maybeNull?.length  // Possible null instead of length
@@ -426,7 +422,7 @@ maybeNull!!.length // Possible NPE
 var valueOrSadness = maybeNull ?: "it was null 😞"
 ```
 
-^You can also just be stupid
+^You can also just be lazy, but it's obvious
 
 ---
 
@@ -437,7 +433,7 @@ var neverNull: String = "foobar"
 var maybeNull: String? = "baz"
 
 neverNull = null   // Compiler error
-neverNull.length   // Guaranteed OK
+neverNull.length   // Guaranteed ok
 
 maybeNull.length   // Compiler error
 maybeNull?.length  // Possible null instead of length
@@ -461,7 +457,9 @@ if (maybeNull != null && maybeNull.length > 5) {
 }
 ```
 
-^Null values are easy to handle because the compiler will track their nullibility
+^What makes vull values easy to handle is the compiler's null tracking
+
+^If you have a conditional that checks whether a variable is null, the compiler understands that
 
 ---
 
@@ -480,7 +478,7 @@ val listOfStrings = returnsAListOfStrings()
 val firstString = listOfStrings[0]
 ```
 
-^The compiler can infer types
+^Say you have this function (written in Kotlin)
 
 ---
 
@@ -499,7 +497,7 @@ val listOfStrings = returnsAListOfStrings()
 val firstString = listOfStrings[0]
 ```
 
-^The compiler can infer types
+^Calling it from Java requires explicitly stating the new variable's type
 
 ---
 
@@ -518,7 +516,7 @@ val listOfStrings = returnsAListOfStrings()
 val firstString = listOfStrings[0]
 ```
 
-^The compiler can infer types
+^But the Kotlin compiler can infer types (Java 10 can do this, too)
 
 ---
 
@@ -546,6 +544,8 @@ public class Pagechat {
 }
 ```
 
+^In Java, creating a class just to store data is cumbersome
+
 ---
 
 # Data class (POJO equivalent)
@@ -563,24 +563,8 @@ Free stuff:
 - `copy()`
 
 ^Like Scala case classes
-Free copy constructor is great—change a few attributes but get a new object
 
----
-
-# Param checking in Kotlin
-
-```kotlin
-fun updateAddress(newAddress: UpdateAddress): Boolean {
-    // Guaranteed to be well-formed
-    ...
-}
-
-data class UpdateAddress(val userId: Int, val address: Address )
-
-data class Address(val number: Int, val street: String, val zip: Int)
-```
-
-^Params automatically checked, can use the types elsewhere
+^Free copy constructor is great—change a few attributes but get a new object
 
 ---
 
@@ -606,21 +590,6 @@ fun createPagechat(url: String, fresh: Boolean): Pagechat {
 
 ---
 
-# Better `switch` statement (`when`)
-
-```kotlin
-when (view) {
-    is TextView -> toast(view.text)
-    is RecyclerView -> toast("Item count = ${view.adapter.itemCount}")
-    is SearchView -> toast("Current query: ${view.query}")
-    else -> toast("View type not supported")
-}
-```
-
-^Note auto-casting
-
----
-
 # Named arguments & defaults
 
 ```kotlin
@@ -639,7 +608,59 @@ val named = User(email = "foo@bar.com", name = "Foo Bar")
 
 ---
 
-# Tail recursion[^4]
+# Coroutines[^4]
+
+```kotlin
+fun main(args: Array<String>) {
+    GlobalScope.launch { // launches coroutine in background thread
+        delay(1000L) // doesn't block main thread
+        println("World!")
+    }
+    println("Hello,")
+    Thread.sleep(2000L) // block main thread for 2 seconds to keep JVM alive
+}
+
+// Hello,
+// World!
+```
+
+[^4]: https://kotlinlang.org/docs/reference/coroutines/basics.html#your-first-coroutine
+
+---
+
+# Simple asynchronos execution[^5]
+
+```kotlin
+suspend fun slowApiOne(): Int {
+    delay(1000L) // pretend we are doing something useful here
+    return 13
+}
+suspend fun slowApiTwo(): Int {
+    delay(1000L) // pretend we are doing something useful here, too
+    return 29
+}
+
+fun main(args: Array<String>) = runBlocking<Unit> {
+    val one = async { slowApiOne() }
+    val two = async { slowApiTwo() }
+    println("The answer is ${one.await() + two.await()}")
+}
+
+// takes ~1000ms
+```
+
+[^5]: https://kotlinlang.org/docs/reference/coroutines/composing-suspending-functions.html
+
+---
+
+#[fit] Other bits
+
+^================
+^================
+
+---
+
+# Tail recursion[^6]
 
 ```kotlin
 tailrec fun findFixPoint(x: Double = 1.0): Double {
@@ -658,7 +679,9 @@ tailrec fun findFixPoint(x: Double = 1.0): Double
         = if (x == Math.cos(x)) x else findFixPoint(Math.cos(x))
 ```
 
-[^4]: https://kotlinlang.org/docs/reference/functions.html#tail-recursive-functions
+[^6]: https://kotlinlang.org/docs/reference/functions.html#tail-recursive-functions
+
+^The Kotlin compiler can make tail-recursive functions stack safe
 
 ---
 
@@ -674,6 +697,25 @@ enum class Matcher(val cssQuery: String,
 ```
 
 ^Make string enum without looking it up on Stack Overflow
+
+---
+
+# Better `switch` statement (`when`)[^7]
+
+```kotlin
+when (view) {
+    is TextView -> toast(view.text)
+    is RecyclerView -> toast("Item count = ${view.adapter.itemCount}")
+    is SearchView -> toast("Current query: ${view.query}")
+    else -> toast("View type not supported")
+}
+```
+
+[^7]: https://antonioleiva.com/when-expression-kotlin/
+
+^Note auto-casting
+
+^Compare with Scala
 
 ---
 
@@ -697,15 +739,10 @@ val grid = qualified.map { cars[it] }
 
 ---
 
-#[fit] ———————————
-#[fit] ———————————
-#[fit] How?
-#[fit] ———————————
-#[fit] ———————————
-
----
-
 #[fit] How do I use it?
+
+^================
+^================
 
 ---
 
@@ -717,7 +754,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.2"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.2.70"
     }
 }
 
@@ -731,14 +768,13 @@ apply plugin: 'kotlin'
 **Tell me more**
 - Kotlin docs—[https://kotlinlang.org/docs/reference/]()
 - Try Kotlin in your browser—[http://try.kotlinlang.org/]()
-- My Kotlin repos—[https://github.com/dinomite](https://github.com/dinomite)
-- Dynamic vs Static—[https://youtu.be/Uxl_X3zXVAM](https://youtu.be/Uxl_X3zXVAM)
+- My Kotlin repos—[https://github.com/dinomite]()
+- Dynamic vs Static—[https://youtu.be/Uxl_X3zXVAM]()
+- Criticisms of Kotlin—[https://allegro.tech/2018/05/From-Java-to-Kotlin-and-Back-Again.html]()
 
 **Drew Stephens**
 \<drew@dinomite.net\>
 [@dinomite](https://twitter.com/dinomite)
-
-[https://forumforall.net](https://forumforall.net)
 
 ---
 
@@ -809,3 +845,20 @@ findUser(7)?.let {
 ```
 
 [^2]: http://beust.com/weblog/2016/01/14/a-close-look-at-kotlins-let/
+
+---
+
+# Param checking in Kotlin
+
+```kotlin
+fun updateAddress(newAddress: UpdateAddress): Boolean {
+    // Guaranteed to be well-formed
+    ...
+}
+
+data class UpdateAddress(val userId: Int, val address: Address )
+
+data class Address(val number: Int, val street: String, val zip: Int)
+```
+
+^Compare with Java version in the first section
